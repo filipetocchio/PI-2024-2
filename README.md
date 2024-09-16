@@ -31,7 +31,7 @@ Voce ira encontrar o que deveria ser sobre a atividade no arquivo "Documentaçã
 Voce ira encontrar o que deveria ser sobre a atividade na pasta "Matemática Computacional"
 
 ### Processamento Digital - Prof. "Fabio Pereira Botelho" :
-Voce ira encontrar o que deveria ser sobre a atividade na pasta "Processamento Digital"
+Voce ira encontrar o que deveria ser sobre a atividade no arquivo "Documentação.md"
 
 ### Desenvolvimento Back-End - Prof. "Vinicius Sarmento Costa Siqueira" :
 Voce ira encontrar o que deveria ser sobre a atividade na pasta "Desenvolvimento Back-End"
