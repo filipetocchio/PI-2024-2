@@ -1,3 +1,6 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -7,7 +10,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Comentado temporariamente, pois o SQLite não suporta enums, mas pode ser descomentado ao migrar para PostgreSQL
+// temporary comment because sqlite does not support it, uncomment when switching to PostgreSQL.
 // enum role {
 //   STUDENT
 //   TEACHER
@@ -16,64 +19,50 @@ datasource db {
 //   ADMIN
 // }
 
-// Modelo para Voluntários
 model TbVoluntario {
   id              Int     @id @default(autoincrement())
   nome            String
-  sobrenome       String
   cpf             String  @unique
+  disponibilidade String // ex: days of the week and hours
+  areasInteresse  String // list of areas of interest, stored as a comma-separated string
+  experiencia     String? // brief description of previous experience
 
-  // Relações com outros modelos
-  enderecos       TbEndereco[]
-  contatos        TbContato[]
-  usuario         TbUsuario?
-  ongsSeguidas    TbONG[] @relation("Seguidores")
-  projetosInscritos TbProjeto[] @relation("Inscritos")
+  // relationship
+  TbEndereco TbEndereco[]
+  TbContato  TbContato[]
+  TbUsuario  TbUsuario[]
 
-  hashimg     String
-
-  // Campos de log para controle de histórico
-  openedat       DateTime  @default(now())
-  closedAt       DateTime?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  excludedAt     DateTime?
+  // log
+  openedat   DateTime  @default(now()) // opening date
+  closedAt   DateTime? // closing date
+  createdAt  DateTime  @default(now()) // creation date
+  updatedAt  DateTime  @updatedAt // update date
+  excludedAt DateTime? // deletion date
 }
 
-// Modelo para ONGs
 model TbONG {
   id           Int     @id @default(autoincrement())
   cnpj         String  @unique
   razaoSocial  String
   nomeFantasia String
+  site         String? // optional
+  descricao    String? // brief description of the NGO
+  areasAtuacao String // ex: education, environment, health
+  responsavel  String // name of the responsible person
 
-  site         String?
-  instagram   String?
+  // relationship
+  TbEndereco TbEndereco[]
+  TbContato  TbContato[]
+  TbUsuario  TbUsuario[]
 
-  descricao    String?
-  areasAtuacao String
-  responsavel  String
-  CPFResponsavel String
-
-  hashimg     String  
-
-  // Relações com outros modelos
-  enderecos    TbEndereco[]
-  contatos      TbContato[]
-  usuario       TbUsuario?
-  seguidores    TbVoluntario[] @relation("Seguidores")
-  projetos      TbProjeto[]
-  newsletters   TbNewsletter[]
-
-  // Campos de log para controle de histórico
-  openedat       DateTime  @default(now())
-  closedAt       DateTime?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  excludedAt     DateTime?
+  // log
+  openedat   DateTime  @default(now()) // opening date
+  closedAt   DateTime? // closing date
+  createdAt  DateTime  @default(now()) // creation date
+  updatedAt  DateTime  @updatedAt // update date
+  excludedAt DateTime? // deletion date
 }
 
-// Modelo para Usuários
 model TbUsuario {
   id           Int     @id @default(autoincrement())
   email        String  @unique
@@ -81,117 +70,57 @@ model TbUsuario {
   password     String
   refreshToken String? @unique
 
-  // Relações com outros modelos
-  FkIdTbVoluntario Int? @unique
-  TbVoluntario     TbVoluntario? @relation(fields: [FkIdTbVoluntario], references: [id])
-  FkIdTbONG        Int? @unique
-  TbONG            TbONG? @relation(fields: [FkIdTbONG], references: [id])
-
-  // Campos de log para controle de histórico
-  openedat       DateTime  @default(now())
-  closedAt       DateTime?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  excludedAt     DateTime?
-}
-
-// Modelo para Endereços
-model TbEndereco {
-  id Int @id @default(autoincrement())
-  endereco String
-  cep      String
-  cidade   String
-  estado   String
-  numero  String
-  complemento String?
-
-  // Relações com outros modelos
+  // relationship
   FkIdTbVoluntario Int?
   TbVoluntario     TbVoluntario? @relation(fields: [FkIdTbVoluntario], references: [id])
   FkIdTbONG        Int?
-  TbONG            TbONG? @relation(fields: [FkIdTbONG], references: [id])
+  TbONG            TbONG?        @relation(fields: [FkIdTbONG], references: [id])
 
-  // Campos de log para controle de histórico
-  openedat       DateTime  @default(now())
-  closedAt       DateTime?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  excludedAt     DateTime?
+  // log
+  openedat   DateTime  @default(now()) // opening date
+  closedAt   DateTime? // closing date
+  createdAt  DateTime  @default(now()) // creation date
+  updatedAt  DateTime  @updatedAt // update date
+  excludedAt DateTime? // deletion date
 }
 
-// Modelo para Contatos
+model TbEndereco {
+  id Int @id @default(autoincrement())
+
+  endereco String
+  cidade   String
+  estado   String
+  cep      String
+
+  // relationship
+  FkIdTbVoluntario Int?
+  TbVoluntario     TbVoluntario? @relation(fields: [FkIdTbVoluntario], references: [id])
+  FkIdTbONG        Int?
+  TbONG            TbONG?        @relation(fields: [FkIdTbONG], references: [id])
+
+  // log
+  openedat   DateTime  @default(now()) // opening date
+  closedAt   DateTime? // closing date
+  createdAt  DateTime  @default(now()) // creation date
+  updatedAt  DateTime  @updatedAt // update date
+  excludedAt DateTime? // deletion date
+}
+
 model TbContato {
   id       Int    @id @default(autoincrement())
   telefone String
   email    String @unique
 
-  // Relações com outros modelos
+  // relationship
   FkIdTbVoluntario Int?
   TbVoluntario     TbVoluntario? @relation(fields: [FkIdTbVoluntario], references: [id])
   FkIdTbONG        Int?
-  TbONG            TbONG? @relation(fields: [FkIdTbONG], references: [id])
+  TbONG            TbONG?        @relation(fields: [FkIdTbONG], references: [id])
 
-  // Campos de log para controle de histórico
-  openedat       DateTime  @default(now())
-  closedAt       DateTime?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  excludedAt     DateTime?
-}
-
-// Modelo para Projetos
-model TbProjeto {
-  id          Int        @id @default(autoincrement())
-  nome        String
-  descricao   String
-  data        DateTime
-  hora        String
-  local       String
-  numerVagas  Int
-
-  hashimg     String  
-
-  // Relações com outros modelos
-  FkIdTbONG   Int
-  TbONG       TbONG      @relation(fields: [FkIdTbONG], references: [id])
-  voluntarios TbVoluntario[] @relation("Inscritos")
-
-  // Campos de log para controle de histórico
-  openedat       DateTime  @default(now())
-  closedAt       DateTime?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  excludedAt     DateTime?
-}
-
-// Modelo para Newsletters
-model TbNewsletter {
-  id        Int     @id @default(autoincrement())
-  titulo    String
-  conteudo  String
-
-  FkIdTbONG Int
-  // Relações com outros modelos
-  TbONG     TbONG   @relation(fields: [FkIdTbONG], references: [id])
-  
-  // Campos de log para controle de histórico
-  openedat       DateTime  @default(now())
-  closedAt       DateTime?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  excludedAt     DateTime?
-}
-
-model teste {
-  id Int @id @default(autoincrement())
-
-  string String
-  int Int
-
-  // Campos de log para controle de histórico
-  openedat       DateTime  @default(now())
-  closedAt       DateTime?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  excludedAt     DateTime?
+  // log
+  openedat   DateTime  @default(now()) // opening date
+  closedAt   DateTime? // closing date
+  createdAt  DateTime  @default(now()) // creation date
+  updatedAt  DateTime  @updatedAt // update date
+  excludedAt DateTime? // deletion date
 }

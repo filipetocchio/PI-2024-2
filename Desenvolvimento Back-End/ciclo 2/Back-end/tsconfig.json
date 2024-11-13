@@ -7,6 +7,6 @@
     "removeComments": true,
     "outDir": "dist"
   },
-  "include": ["src/**/*", "SRC/services/TbVoluntario/.POST.Service.ts", "SRC/services/TbVoluntario/.PATCH.Service.ts", "SRC/services/TbVoluntario/.GET.Service.ts", "SRC/services/TbVoluntario/.DELETE.Service.ts"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.mock.ts"]
 }
